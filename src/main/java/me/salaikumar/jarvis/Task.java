@@ -5,10 +5,16 @@ public class Task {
     private Status status;
     private int id;
 
-    public Task(String taskDescription,int id){
+    public Task(int id, String taskDescription){
         this.taskDescription = taskDescription;
         this.status = Status.C;
         this.id = id;
+    }
+
+    public Task(int id, String taskDescription, Status status) {
+        this.id = id;
+        this.taskDescription = taskDescription;
+        this.status = status;
     }
 
     public Status getStatus() {
@@ -67,6 +73,6 @@ public class Task {
             default:
                 statusText = "Some Stage";
         }
-        return  id + "." + taskDescription  + "--" + status ;
+        return  id + "--" + taskDescription  + "--" + status ;
     }
 }
