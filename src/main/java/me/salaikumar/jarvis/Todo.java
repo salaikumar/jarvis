@@ -96,7 +96,7 @@ public class Todo {
         try {
             fileObj = new FileWriter(todoFile.getName());
             fileObj.write("");
-            List<Task> allTasks = (List<Task>) tasks.values();
+            List<Task> allTasks = getAllTasks();
             for (Task task : allTasks){
                 fileObj.write(task.toString());
             }
@@ -104,5 +104,47 @@ public class Todo {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    /*
+     * get all the tasks from the hash table
+     */
+    public List<Task> getAllTasks(){
+        return (List<Task>) tasks.values();
+    }
+
+    /*
+     * Search with the task name.
+     */
+    public boolean search(String desc){
+        return false;
+    }
+
+    /*
+     * Get all Completed Tasks
+     */
+    public List<Task> completedTasks(){
+        return  null;
+    }
+
+    /*
+     * Get all Archived Tasks
+     */
+    public List<Task> archivedTasks(){
+        return null;
+    }
+
+    /*
+     * Get Next Target Tasks
+     */
+    public List<Task> nextTasks(){
+        return null;
+    }
+
+    /*
+     * Get current working on tasks
+     */
+    public List<Task> workingTasks(){
+        return null;
     }
 }
