@@ -1,13 +1,15 @@
 package me.salaikumar.jarvis;
 
-public class Task {
+import java.io.Serializable;
+
+public class Task implements Serializable {
     private String taskDescription;
     private Status status;
     private int id;
 
     public Task(int id, String taskDescription){
         this.taskDescription = taskDescription;
-        this.status = Status.C;
+        this.status = Status.N; // Any new Task, is considered to be Next Target
         this.id = id;
     }
 
@@ -73,6 +75,11 @@ public class Task {
             default:
                 statusText = "Some Stage";
         }
-        return  id + "--" + taskDescription  + "--" + status ;
+        return  id + "--" + taskDescription  + "--" + statusText ;
     }
+
+    public String formatString(){
+        return  id + "--" + taskDescription + "--" + status;
+    }
+
 }

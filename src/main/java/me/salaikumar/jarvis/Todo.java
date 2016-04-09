@@ -1,20 +1,22 @@
 package me.salaikumar.jarvis;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
+import java.nio.Buffer;
+import java.nio.IntBuffer;
 import java.nio.file.Files;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 /**
  * Todo
  * Helps to Create, Delete, Mark, Archive tasks
  */
 public class Todo {
+
     private File todoFile;
-    private HashMap<Integer,Task> tasks;
+    private Map<Integer,Task> tasks;
+    private Map<String, Integer> taskDescription;
+    private Random random;
+
     /*
      * Check if a named TODO.txt exists
      * Location. User's home/documents.
@@ -23,6 +25,11 @@ public class Todo {
     public Todo(){
         String homeDirPath = System.getProperty("user.home") + File.separator + "Documents" + File.separator + "TODO.text";
         todoFile  = new File(homeDirPath);
+        random    = new Random(17);
+
+        tasks     = new HashMap<Integer, Task>();             // Complete Index
+        taskDescription = new HashMap<String, Integer>();     // Description Index
+
         if (!todoFile.exists()){
             try {
                 todoFile.createNewFile();
@@ -31,39 +38,51 @@ public class Todo {
             }
         }
         else {
-            List<String> lines;
-            // Read the data from the file and generate the tasks
-            try {
-                lines = Files.readAllLines(todoFile.toPath());
-            } catch (IOException e) {
-                throw new RuntimeException("Unable to read file");
-            }
-
-            for (String lineItem : lines) {
-                String[] items = lineItem.split("--");
-                Status status = null;
-                int id = Integer.parseInt(items[0]);
-                if (items[2].equals("A")) {
-                    status = Status.A;
-                } else if (items[2].equals("C")) {
-                    status = Status.C;
-
-                } else if (items[2].equals("W")) {
-                    status = Status.W;
-
-                } else if (items[2].equals("N")) {
-                    status = Status.N;
-                }
-                tasks.put(id,new Task(id,items[1],status));
-            }
+//          Generate the index from the file
+            populateMaps();
         }
     }
 
+    /*
+     * Helps to generate 2 maps
+     * 1. Complete index maps
+     * 2. Description Object Maps
+     */
+    private void populateMaps() {
+        Task newTask = null;
+        try {
+            FileInputStream inputStream = new FileInputStream(todoFile.getAbsolutePath());
+            ObjectInputStream objectInputStream = new ObjectInputStream(inputStream);
+            while(true){
+                try {
+                    newTask = (Task) objectInputStream.readObject();
+                }catch (EOFException e){
+                    break;
+                }
+                tasks.put(newTask.getId(),newTask);
+                taskDescription.put(newTask.getTaskDescription(),newTask.getId());
+            }
+            objectInputStream.close();
+            inputStream.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (EOFException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public boolean search(String taskDesc){
+        return taskDescription.containsKey(taskDesc);
+    }
     public void addTask(String description){
-        // Generate a random int for the task id.
-        Random random = new Random(17);
+        // Generate a random int for the task id
         int randId = random.nextInt();
         tasks.put(randId,new Task(randId,description));
+        taskDescription.put(description,randId);
     }
 
     public void updateStatus(int id,Character status){
@@ -88,63 +107,90 @@ public class Todo {
     }
 
     /*
-     * Open the file in write mode , update data and close it
-     */
-    private void persistTask(){
-        FileWriter fileObj = null;
-
-        try {
-            fileObj = new FileWriter(todoFile.getName());
-            fileObj.write("");
-            List<Task> allTasks = getAllTasks();
-            for (Task task : allTasks){
-                fileObj.write(task.toString());
-            }
-            fileObj.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    /*
      * get all the tasks from the hash table
      */
     public List<Task> getAllTasks(){
-        return (List<Task>) tasks.values();
-    }
-
-    /*
-     * Search with the task name.
-     */
-    public boolean search(String desc){
-        return false;
+        ArrayList<Task> allTasks = new ArrayList<Task>();
+        Set<Integer> keys = tasks.keySet();
+        for (Integer key : keys){
+            allTasks.add(tasks.get(key));
+        }
+        return allTasks;
     }
 
     /*
      * Get all Completed Tasks
      */
     public List<Task> completedTasks(){
-        return  null;
+        ArrayList<Task> completedTasks = new ArrayList<Task>();
+        Set<Integer> keys = tasks.keySet();
+        for (Integer key : keys){
+            Task task =  tasks.get(key);
+            if (task.getStatus() == Status.C)
+                completedTasks.add(task);
+        }
+        return completedTasks;
     }
 
     /*
      * Get all Archived Tasks
      */
     public List<Task> archivedTasks(){
-        return null;
+        ArrayList<Task> archivedTasks = new ArrayList<Task>();
+        Set<Integer> keys = tasks.keySet();
+        for (Integer key : keys){
+            Task task =  tasks.get(key);
+            if (task.getStatus() == Status.A)
+                archivedTasks.add(task);
+        }
+        return archivedTasks;
     }
 
     /*
      * Get Next Target Tasks
      */
     public List<Task> nextTasks(){
-        return null;
+        ArrayList<Task> nextTasks = new ArrayList<Task>();
+        Set<Integer> keys = tasks.keySet();
+        for (Integer key : keys){
+            Task task =  tasks.get(key);
+            if (task.getStatus() == Status.N)
+                nextTasks.add(task);
+        }
+        return nextTasks;
     }
 
     /*
      * Get current working on tasks
      */
     public List<Task> workingTasks(){
-        return null;
+        ArrayList<Task> workingTasks = new ArrayList<Task>();
+        Set<Integer> keys = tasks.keySet();
+        for (Integer key : keys){
+            Task task =  tasks.get(key);
+            if (task.getStatus() == Status.W)
+                workingTasks.add(task);
+        }
+        return workingTasks;
+    }
+
+    /*
+     * Saves the changes to the file
+     */
+    public void save(){
+        try {
+            FileOutputStream fileOutputStream = new FileOutputStream(todoFile.getAbsolutePath());
+            ObjectOutputStream outputPrint = new ObjectOutputStream(fileOutputStream);
+            Set<Integer> keySet = tasks.keySet();
+            for (Integer i : keySet){
+                outputPrint.writeObject(tasks.get(i));
+            }
+            outputPrint.close();
+            fileOutputStream.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }
