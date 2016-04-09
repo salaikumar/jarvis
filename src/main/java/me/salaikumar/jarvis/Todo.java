@@ -1,10 +1,9 @@
 package me.salaikumar.jarvis;
 
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
-import java.nio.charset.CharacterCodingException;
 import java.nio.file.Files;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
@@ -88,7 +87,22 @@ public class Todo {
         tasks.put(id,task);
     }
 
+    /*
+     * Open the file in write mode , update data and close it
+     */
     private void persistTask(){
-        
+        FileWriter fileObj = null;
+
+        try {
+            fileObj = new FileWriter(todoFile.getName());
+            fileObj.write("");
+            List<Task> allTasks = (List<Task>) tasks.values();
+            for (Task task : allTasks){
+                fileObj.write(task.toString());
+            }
+            fileObj.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }
