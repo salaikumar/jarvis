@@ -17,7 +17,6 @@ public class CLIMaintenance{
     public CLIMaintenance(){
       options = new Options();
       parser =  new CommandLineParser();
-      cmdLine = new CommandLine();
       helpFormatter = new HelpFormatter();
       generateOptions();
     }
@@ -110,7 +109,17 @@ public class CLIMaintenance{
      options.addOption(work);
     }
 
-    
+    /*
+    * parse ()
+    * parse the given input as per the options and print it
+    */
+    public void parse(String[] args){
+      cmdLine = CommandLineParser.parse(options, args);
+      
+    }
+    // Let this class be the face to the app.
+    // No need of one more driver class
+    public static void main(String args[]){
 
-
+    }
 }
