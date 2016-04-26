@@ -16,7 +16,7 @@ public class CLIMaintenance{
     // Constructor
     public CLIMaintenance(){
       options = new Options();
-      parser =  new CommandLineParser();
+      parser =  new DefaultParser();             //CommandLineParser(); - this is an abstract class.
       helpFormatter = new HelpFormatter();
       generateOptions();
     }
@@ -24,7 +24,7 @@ public class CLIMaintenance{
     /*
     * Generate all Options
     */
-    public generateOptions(){
+    public void generateOptions(){
       /*
       * -h --help
       * Display all possible Options
@@ -59,7 +59,7 @@ public class CLIMaintenance{
       * -u , --update <task number>  <status>
       */
       Option update = OptionBuilder.withArgName(" task number> <status")
-                                   .withValueSeperator(' ')
+                                   .withValueSeparator(' ')
                                    .hasArgs(2)
                                    .withLongOpt("update")
                                    .withDescription("Updates the given <task number> with given <status>")
@@ -113,13 +113,18 @@ public class CLIMaintenance{
     * parse ()
     * parse the given input as per the options and print it
     */
-    public void parse(String[] args){
-      cmdLine = CommandLineParser.parse(options, args);
-      
+    public void parseCommands(String[] args){
+      try{
+        cmdLine = parser.parse(options, args);
+      }catch(ParseException pe){
+         pe.printStackTrace();
+      }
+
+
     }
     // Let this class be the face to the app.
     // No need of one more driver class
-    public static void main(String args[]){
+    public static void main(String[] args){
 
     }
 }
