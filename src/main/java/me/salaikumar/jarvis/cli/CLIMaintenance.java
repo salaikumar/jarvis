@@ -1,4 +1,4 @@
-/*
+package me.salaikumar.jarvis.cli;/*
 * CLI Maintenance
 * Creates the command line options as needed.
 * This class should be tested by using Command line.
@@ -120,12 +120,16 @@ public class CLIMaintenance{
          pe.printStackTrace();
       }
 
-        //Call the TODO API to get things done
+      if(cmdLine.hasOption('')){
+
+      }
 
     }
     // Let this class be the face to the app.
     // No need of one more driver class
     public static void main(String[] args){
+
+        // Use HelpFormatter to dispplay all options
 
     }
 }
