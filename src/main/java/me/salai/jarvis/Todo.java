@@ -1,9 +1,6 @@
-package me.salaikumar.jarvis;
+package me.salai.jarvis;
 
 import java.io.*;
-import java.nio.Buffer;
-import java.nio.IntBuffer;
-import java.nio.file.Files;
 import java.util.*;
 
 /**
@@ -74,8 +71,8 @@ public class Todo {
             e.printStackTrace();
         }
     }
-
-    public boolean search(String taskDesc){
+    // FixMe --> 1.Ignore Case, 2. Search for Substring. 3.Search using Regex Pattern Match. 4. Return a list
+    public boolean isPresent(String taskDesc){
         return taskDescription.containsKey(taskDesc);
     }
     public void addTask(String description){

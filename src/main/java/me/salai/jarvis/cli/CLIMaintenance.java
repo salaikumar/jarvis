@@ -1,10 +1,11 @@
-package me.salaikumar.jarvis.cli;/*
+package me.salai.jarvis.cli;/*
 * CLI Maintenance
 * Creates the command line options as needed.
 * This class should be tested by using Command line.
 */
 
 // Should be optimized soon
+import me.salai.jarvis.Todo;
 import org.apache.commons.cli.*;
 
 public class CLIMaintenance{
@@ -12,12 +13,14 @@ public class CLIMaintenance{
     private CommandLineParser parser;
     private CommandLine cmdLine;
     private HelpFormatter helpFormatter;
+    Todo todo;
 
     // Constructor
     public CLIMaintenance(){
       options = new Options();
       parser =  new DefaultParser();             //CommandLineParser(); - this is an abstract class.
       helpFormatter = new HelpFormatter();
+      todo = new Todo();
       generateOptions();
     }
 
@@ -119,17 +122,45 @@ public class CLIMaintenance{
       }catch(ParseException pe){
          pe.printStackTrace();
       }
-
-      if(cmdLine.hasOption('')){
-
+      //FixME --> Is this the only way I can Query for Options? Check API
+      //FixME --> Check how it prints a list by default. else, you need write code for it
+      // FixME --> Check for Exceptions at points -- 1. Arguments passed when not required
+//                                                -- 2. Arguments not passed when required
+      if(cmdLine.hasOption('w')){
+          System.out.println(todo.workingTasks());
       }
 
+      if (cmdLine.hasOption('n')){
+          System.out.println(todo.nextTasks());
+      }
+
+      if (cmdLine.hasOption("ar")){
+          System.out.println(todo.archivedTasks());
+      }
+
+      if (cmdLine.hasOption('c')){
+          System.out.println(todo.completedTasks());
+      }
+
+      if (cmdLine.hasOption("all")){
+          System.out.println(todo.getAllTasks());
+      }
+
+      if( cmdLine.hasOption('a')){
+
+        todo.addTask(cmdLine.getOptionValue('a'));
+        // If needed print all Tasks
+      }
+
+      if (cmdLine.hasOption('s')){
+          System.out.println(todo.isPresent(cmdLine.getOptionValue('s')));
+      }
     }
     // Let this class be the face to the app.
     // No need of one more driver class
     public static void main(String[] args){
-
-        // Use HelpFormatter to dispplay all options
-
+        // Add the options
+        CLIMaintenance cliMaintenance= new CLIMaintenance();
+        cliMaintenance.parseCommands(args);
     }
 }

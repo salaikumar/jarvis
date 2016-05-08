@@ -1,4 +1,4 @@
-package me.salaikumar.jarvis;
+package me.salai.jarvis;
 
 /**
  * Status
