@@ -59,7 +59,7 @@ public class Task implements Serializable {
     @Override
     public String toString() {
         String statusText = null;
-        switch (status){
+        switch (this.status){
             case A:
                 statusText = "Archived";
                 break;

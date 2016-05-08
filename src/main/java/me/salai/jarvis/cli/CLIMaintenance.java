@@ -5,8 +5,11 @@ package me.salai.jarvis.cli;/*
 */
 
 // Should be optimized soon
+import me.salai.jarvis.Task;
 import me.salai.jarvis.Todo;
 import org.apache.commons.cli.*;
+
+import java.util.List;
 
 public class CLIMaintenance{
     private Options options;
@@ -28,15 +31,6 @@ public class CLIMaintenance{
     * Generate all Options
     */
     public void generateOptions(){
-      /*
-      * -h --help
-      * Display all possible Options
-      * Might be replaced with help formatter.-- Need to check
-      */
-      Option help = OptionBuilder.withDescription("Jarvis: I understand the below commands master")
-                                .withLongOpt("help")
-                                .create("h");
-      options.addOption(help);
       /*
       * -s, --search <task desc>
       * return the list of tasks that matches the search task description
@@ -62,7 +56,7 @@ public class CLIMaintenance{
       * -u , --update <task number>  <status>
       */
       Option update = OptionBuilder.withArgName(" task number> <status")
-                                   .withValueSeparator(' ')
+                                   .withValueSeparator(',')
                                    .hasArgs(2)
                                    .withLongOpt("update")
                                    .withDescription("Updates the given <task number> with given <status>")
@@ -118,44 +112,53 @@ public class CLIMaintenance{
     */
     public void parseCommands(String[] args){
       try{
-        cmdLine = parser.parse(options, args);
+          cmdLine = parser.parse(options, args);
+          if(cmdLine.hasOption('w')){
+              printList(todo.workingTasks());
+          }
+          else if (cmdLine.hasOption('n')){
+              printList(todo.nextTasks());
+          }
+          else if (cmdLine.hasOption("ar")){
+              printList(todo.archivedTasks());
+          }
+          else if (cmdLine.hasOption('c')){
+              printList(todo.completedTasks());
+          }
+          else if (cmdLine.hasOption("all")){
+              printList(todo.getAllTasks());
+          }
+          else if( cmdLine.hasOption('a')){
+              todo.addTask(cmdLine.getOptionValue('a'));
+              todo.save();
+              printList(todo.getAllTasks());
+          }
+          else if (cmdLine.hasOption('s')){
+              System.out.println(todo.isPresent(cmdLine.getOptionValue('s')));
+              // Mark the task in diff color and return.
+          }
+          else if (cmdLine.hasOption('u')){
+              String inputs[] = cmdLine.getOptionValues('u');
+              if (inputs.length < 2 || inputs.length > 2)
+                  System.out.println("Required Arguments missing. Use -h to see it's usage");
+              else {
+                  todo.updateStatus(Integer.parseInt(inputs[0]),inputs[1].charAt(0));
+                  todo.save();
+              }
+          }
       }catch(ParseException pe){
-         pe.printStackTrace();
-      }
-      //FixME --> Is this the only way I can Query for Options? Check API
-      //FixME --> Check how it prints a list by default. else, you need write code for it
-      // FixME --> Check for Exceptions at points -- 1. Arguments passed when not required
-//                                                -- 2. Arguments not passed when required
-      if(cmdLine.hasOption('w')){
-          System.out.println(todo.workingTasks());
+          System.out.println("Invalid option");
+          helpFormatter.printHelp("jarvis",options);
       }
 
-      if (cmdLine.hasOption('n')){
-          System.out.println(todo.nextTasks());
-      }
-
-      if (cmdLine.hasOption("ar")){
-          System.out.println(todo.archivedTasks());
-      }
-
-      if (cmdLine.hasOption('c')){
-          System.out.println(todo.completedTasks());
-      }
-
-      if (cmdLine.hasOption("all")){
-          System.out.println(todo.getAllTasks());
-      }
-
-      if( cmdLine.hasOption('a')){
-
-        todo.addTask(cmdLine.getOptionValue('a'));
-        // If needed print all Tasks
-      }
-
-      if (cmdLine.hasOption('s')){
-          System.out.println(todo.isPresent(cmdLine.getOptionValue('s')));
-      }
     }
+    // Print the given tasks in a proper way
+    // FixMe -> Print it as a Table.
+    private void printList(List<Task> tasks) {
+        for ( Task task : tasks)
+            System.out.println(task.toString());
+    }
+
     // Let this class be the face to the app.
     // No need of one more driver class
     public static void main(String[] args){

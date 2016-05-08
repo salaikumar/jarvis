@@ -82,7 +82,8 @@ public class Todo {
         taskDescription.put(description,randId);
     }
 
-    public void updateStatus(int id,Character status){
+    // FixMe -> Handle upper and lower case inputs for char
+    public void updateStatus(int id, char status){
         Task task = tasks.get(id);
         Status s =null;
         switch (status){
