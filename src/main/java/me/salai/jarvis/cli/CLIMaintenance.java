@@ -153,10 +153,14 @@ public class CLIMaintenance{
 
     }
     // Print the given tasks in a proper way
-    // FixMe -> Print it as a Table.
+    // FixMe -> Print it as a Table. A proper one.
     private void printList(List<Task> tasks) {
-        for ( Task task : tasks)
-            System.out.println(task.toString());
+        System.out.format("%10s%12s%50s","Id","Task","Status");
+        System.out.printf("%n");
+        for ( Task task : tasks) {
+            System.out.format("%10s%12s%50s", task.getId(), task.getTaskDescription(), task.getStatus());
+            System.out.printf("%n");
+        }
     }
 
     // Let this class be the face to the app.
