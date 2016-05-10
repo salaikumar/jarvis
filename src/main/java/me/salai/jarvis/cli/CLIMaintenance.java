@@ -153,18 +153,11 @@ public class CLIMaintenance{
 
     }
     // Print the given tasks in a proper way
-    // FixMe -> Print it as a Table. A proper one.
+
     private void printList(List<Task> tasks) {
-        System.out.println("-----------------------------------------------------------------------------------------------");
-//        System.out.print("Id \t\t |" + "Task \t\t\t\t |" + "Status \t\t |");
-//        System.out.println("\n------------------------------------------------------------------------------");
-//        for ( Task task : tasks) {
-//            System.out.print( task.getId() + "\t |" + task.getTaskDescription()+"\t |" +task.getStatus() + "\t |");
-//            System.out.printf("%n");
-//            System.out.println("--------------------------------------------------------------------------------");
-//        }
-        System.out.format( "\u001B[35m"+"%-15s %-50s %-5s","| Id","| Task","| Status" );
-        System.out.print("\n-----------------------------------------------------------------------------------------------\n");
+        System.out.println("\u001B[31m" +"-----------------------------------------------------------------------------------------------");
+        System.out.format( "%-15s %-50s %-5s","| Id","| Task","| Status" );
+        System.out.print("\n-----------------------------------------------------------------------------------------------\n" + "\u001B[0m");
         for (Task task: tasks){
             System.out.format("\u001B[37m" +"%-15s %-50s %-5s","| "+task.getId(),"| "+task.getTaskDescription(),"| "+task.getStatus());
             System.out.printf("%n");
