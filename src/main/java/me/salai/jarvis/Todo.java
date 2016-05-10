@@ -75,6 +75,8 @@ public class Todo {
     public boolean isPresent(String taskDesc){
         return taskDescription.containsKey(taskDesc);
     }
+
+    // FixME --> For every new run, it generates the same key. Wrong.
     public void addTask(String description){
         // Generate a random int for the task id
         int randId = random.nextInt();
