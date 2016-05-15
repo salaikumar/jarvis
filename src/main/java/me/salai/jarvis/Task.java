@@ -9,7 +9,7 @@ public class Task implements Serializable {
 
     public Task(int id, String taskDescription){
         this.taskDescription = taskDescription;
-        this.status = Status.N; // Any new Task, is considered to be Next Target
+        this.status = Status.N;
         this.id = id;
     }
 

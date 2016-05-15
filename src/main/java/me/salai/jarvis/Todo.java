@@ -23,9 +23,8 @@ public class Todo {
         String homeDirPath = System.getProperty("user.home") + File.separator + "Documents" + File.separator + "TODO.text";
         todoFile  = new File(homeDirPath);
         random    = new Random(17);
-
-        tasks     = new HashMap<Integer, Task>();             // Complete Index
-        taskDescription = new HashMap<String, Integer>();     // Description Index
+        tasks     = new HashMap<Integer, Task>();
+        taskDescription = new HashMap<String, Integer>();
 
         if (!todoFile.exists()){
             try {
@@ -35,19 +34,22 @@ public class Todo {
             }
         }
         else {
-//          Generate the index from the file
             populateMaps();
         }
     }
 
-    /*
-     * Helps to generate 2 maps
-     * 1. Complete index maps
-     * 2. Description Object Maps
-     */
     private void populateMaps() {
         Task newTask = null;
         try {
+            /*
+             * Solving an Interesting Case.
+             * When File is empty, Object InputStream instance creation throws an EOF Exception
+             * In order to avoid it, Just create and ObjectOutputStream and flush it.
+             */
+            FileOutputStream fileOutputStream = new FileOutputStream(todoFile.getAbsolutePath());
+            ObjectOutputStream outputPrint = new ObjectOutputStream(fileOutputStream);
+            outputPrint.flush();
+
             FileInputStream inputStream = new FileInputStream(todoFile.getAbsolutePath());
             ObjectInputStream objectInputStream = new ObjectInputStream(inputStream);
             while(true){
@@ -76,10 +78,12 @@ public class Todo {
         return taskDescription.containsKey(taskDesc);
     }
 
-    // FixME --> For every new run, it generates the same key. Wrong.
     public void addTask(String description){
-        // Generate a random int for the task id
-        int randId = random.nextInt();
+        // Generate a random number that is not present already
+        int randId;
+        do {
+            randId  = random.nextInt();
+        }while( tasks.get(randId) != null);
         tasks.put(randId,new Task(randId,description));
         taskDescription.put(description,randId);
     }
