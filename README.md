@@ -43,10 +43,10 @@ To update the status of a given task, use any of the below with the Task Id
 java -jar target/jarvis-1.0-SNAPSHOT.jar -u 1723477387 W
 ```
 <B>Status</B>
-W - Working on
-C - Completed
-A - Archive
-N - Next to be worked on
++ W - Working on
++ C - Completed
++ A - Archive
++ N - Next to be worked on
 
 ### Search for a Task
 Search is yet to be completed.You can search using Task description as of now
