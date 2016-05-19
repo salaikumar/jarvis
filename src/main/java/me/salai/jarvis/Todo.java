@@ -29,6 +29,15 @@ public class Todo {
         if (!todoFile.exists()){
             try {
                 todoFile.createNewFile();
+                /*
+                * Solving an Interesting Case.
+                * When File is empty, Object InputStream instance creation throws an EOF Exception
+                * In order to avoid it, Just create and ObjectOutputStream and flush it.
+                */
+                FileOutputStream fileOutputStream = new FileOutputStream(todoFile.getAbsolutePath());
+                ObjectOutputStream outputPrint = new ObjectOutputStream(fileOutputStream);
+                outputPrint.flush();
+
             } catch (IOException e) {
                 throw new RuntimeException("TODO file cannot be created.");
             }
@@ -41,14 +50,6 @@ public class Todo {
     private void populateMaps() {
         Task newTask = null;
         try {
-            /*
-             * Solving an Interesting Case.
-             * When File is empty, Object InputStream instance creation throws an EOF Exception
-             * In order to avoid it, Just create and ObjectOutputStream and flush it.
-             */
-            FileOutputStream fileOutputStream = new FileOutputStream(todoFile.getAbsolutePath());
-            ObjectOutputStream outputPrint = new ObjectOutputStream(fileOutputStream);
-            outputPrint.flush();
 
             FileInputStream inputStream = new FileInputStream(todoFile.getAbsolutePath());
             ObjectInputStream objectInputStream = new ObjectInputStream(inputStream);
@@ -88,25 +89,9 @@ public class Todo {
         taskDescription.put(description,randId);
     }
 
-    // FixMe -> Handle upper and lower case inputs for char
-    public void updateStatus(int id, char status){
+    public void updateStatus(int id, Status status){
         Task task = tasks.get(id);
-        Status s =null;
-        switch (status){
-            case 'A':
-                s = Status.A;
-                break;
-            case 'C':
-                s = Status.C;
-                break;
-            case 'W':
-                s = Status.W;
-                break;
-            case 'N':
-                s = Status.N;
-                break;
-        }
-        task.setStatus(s);
+        task.setStatus(status);
         tasks.put(id,task);
     }
 

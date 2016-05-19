@@ -4,7 +4,7 @@ package me.salai.jarvis.cli;/*
 * This class should be tested by using Command line.
 */
 
-// Should be optimized soon
+import me.salai.jarvis.Status;
 import me.salai.jarvis.Task;
 import me.salai.jarvis.Todo;
 import org.apache.commons.cli.*;
@@ -21,7 +21,7 @@ public class CLIMaintenance{
         // Constructor
         public CLIMaintenance(){
           options = new Options();
-          parser =  new DefaultParser();             //CommandLineParser(); - this is an abstract class.
+          parser =  new DefaultParser();
           helpFormatter = new HelpFormatter();
           todo = new Todo();
           generateOptions();
@@ -141,12 +141,12 @@ public class CLIMaintenance{
                   if (inputs.length < 2 || inputs.length > 2)
                       System.out.println("Required Arguments missing. Use -h to see it's usage");
                   else {
-                      todo.updateStatus(Integer.parseInt(inputs[0]),inputs[1].charAt(0));
+                      Status st = Status.valueOf(inputs[1].toUpperCase());
+                      todo.updateStatus(Integer.parseInt(inputs[0]),st);
                       todo.save();
                   }
               }
           }catch(ParseException pe){
-              System.out.println("Invalid option");
               helpFormatter.printHelp("jarvis",options);
           }
 
@@ -154,7 +154,7 @@ public class CLIMaintenance{
 
         private void printList(List<Task> tasks) {
             if (tasks.isEmpty()){
-                System.out.println("Nothing to do");
+                System.out.println("No Tasks");
                 return;
             }
             System.out.println( "-----------------------------------------------------------------------------------------------");
